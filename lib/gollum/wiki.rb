@@ -236,6 +236,7 @@ module Gollum
       committer.after_commit do |index, sha|
         @access.refresh
         index.update_working_dir('', name, format)
+        committer.wiki.repo.git.push({}, 'origin', 'master')
       end
 
       multi_commit ? committer : committer.commit
@@ -288,6 +289,7 @@ module Gollum
         @access.refresh
         index.update_working_dir(dir, page.name, page.format)
         index.update_working_dir(dir, name, format)
+        committer.wiki.repo.git.push({}, 'origin', 'master')
       end
 
       multi_commit ? committer : committer.commit
