@@ -1,6 +1,11 @@
 <div id="wiki-wrapper" class="page">
 <div id="head">
   <h1>{{title}}</h1>
+
+  {{#logged_in}}
+  <div style="text-align: right;margin: 5pt;">Logged in as: {{logged_in_name}} &lt;{{logged_in_mail}}&gt;</div>
+  {{/logged_in}}
+
   <ul class="actions">
     <li class="minibutton"><a href="/pages"
       class="action-all-pages">All Pages</a></li>
@@ -12,6 +17,8 @@
     {{/editable}}
     <li class="minibutton"><a href="/history/{{escaped_name}}"
        class="action-page-history">Page History</a></li>
+    <li class="minibutton" class="jaws">
+      <a href="#" id="minibutton-login">Login</a></li>
   </ul>
   {{>searchbar}}
 </div>

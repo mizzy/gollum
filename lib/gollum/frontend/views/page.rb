@@ -1,7 +1,7 @@
 module Precious
   module Views
     class Page < Layout
-      attr_reader :content, :page, :footer
+      attr_reader :content, :page, :footer, :logged_in_name, :logged_in_mail
       DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
       DEFAULT_AUTHOR = 'you'
 
@@ -51,6 +51,10 @@ module Precious
 
       def sidebar_format
         has_sidebar && @sidebar.format.to_s
+      end
+
+      def logged_in
+        @logged_in_name
       end
     end
   end

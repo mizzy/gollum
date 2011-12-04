@@ -10,6 +10,10 @@ module Precious
   class App < Sinatra::Base
     register Mustache::Sinatra
 
+    use Rack::Session::Cookie,
+      :expire_after => 31536000
+    enable :sessions
+
     dir = File.dirname(File.expand_path(__FILE__))
 
     # We want to serve public assets for now
@@ -41,6 +45,17 @@ module Precious
       show_page_or_file('Home')
     end
 
+    get '/login' do
+      session[:name] = params[:name]
+      session[:mail] = params[:mail]
+      redirect "/"
+    end
+
+    before do
+      @logged_in_name = session[:name]
+      @logged_in_mail = session[:mail]
+    end
+
     get '/update' do
       wiki = Gollum::Wiki.new(settings.gollum_path, settings.wiki_options)
       wiki.repo.git.pull({}, 'origin', 'master')
@@ -63,7 +78,15 @@ module Precious
       wiki = Gollum::Wiki.new(settings.gollum_path, settings.wiki_options)
       page = wiki.page(params[:splat].first)
       name = params[:rename] || page.name
-      committer = Gollum::Committer.new(wiki, commit_message)
+      options = commit_message
+      if @logged_in_name
+        options[:name] = @logged_in_name
+      end
+      if @logged_in_mail
+        options[:email] = @logged_in_mail
+      end
+
+      committer = Gollum::Committer.new(wiki, options)
       commit    = {:committer => committer}
 
       update_wiki_page(wiki, page, params[:content], commit, name,
@@ -81,8 +104,16 @@ module Precious
 
       format = params[:format].intern
 
+      options = commit_message
+      if @logged_in_name
+        options[:name] = @logged_in_name
+      end
+      if @logged_in_mail
+        options[:email] = @logged_in_mail
+      end
+
       begin
-        wiki.write_page(name, format, params[:content], commit_message)
+        wiki.write_page(name, format, params[:content], options)
         redirect "/#{CGI.escape(name)}"
       rescue Gollum::DuplicatePageError => e
         @message = "Duplicate page: #{e.message}"
