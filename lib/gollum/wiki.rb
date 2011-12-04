@@ -329,6 +329,7 @@ module Gollum
 
         @access.refresh
         index.update_working_dir(dir, page.name, page.format)
+        committer.wiki.repo.git.push({}, 'origin', 'master')
       end
 
       multi_commit ? committer : committer.commit
@@ -386,6 +387,8 @@ module Gollum
           dir = '' if dir == '.'
           index.update_working_dir(dir, name, format)
         end
+
+        committer.wiki.repo.git.push({}, 'origin', 'master')
       end
 
       committer.commit
