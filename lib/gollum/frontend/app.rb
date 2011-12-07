@@ -56,7 +56,7 @@ module Precious
       @logged_in_mail = session[:mail]
     end
 
-    get '/update' do
+    post '/update' do
       wiki = Gollum::Wiki.new(settings.gollum_path, settings.wiki_options)
       wiki.repo.git.pull({}, 'origin', 'master')
       show_page_or_file('Home')
