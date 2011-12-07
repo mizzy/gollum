@@ -59,7 +59,6 @@ module Precious
     post '/update' do
       wiki = Gollum::Wiki.new(settings.gollum_path, settings.wiki_options)
       wiki.repo.git.pull({}, 'origin', 'master')
-      show_page_or_file('Home')
     end
 
     get '/edit/*' do
